@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"friendly-winner/go_winner/main.go/server"
 )
 
 func main() {
-	fmt.Println("Hello, World!")
+	r := server.SetupServer() // Setup the server
+	r.Run(":8080")            // Run the server on http://localhost:8080 by default
 }
