@@ -25,7 +25,7 @@ func RegisterUserRoutes(router *gin.RouterGroup) {
 			return
 		}
 		// newUser.ID = c.MustGet("uuid").(string)
-		users = append(users, newUser)
+		users = append(users, newUser) // placeholder for Firebase functionality
 		c.JSON(http.StatusCreated, newUser)
 	})
 
