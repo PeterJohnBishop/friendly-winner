@@ -41,9 +41,7 @@ class _LoginViewState extends State<LoginView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text("Don't have an account?"),
                     TextButton(
                       onPressed: () {
@@ -76,30 +74,31 @@ class _LoginViewState extends State<LoginView> {
                   _isProcessing
                       ? CircularProgressIndicator()
                       : Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: OutlinedButton(
-                          onPressed: () async {
-                            _emailLoginFocusNode.unfocus();
-                            _passwordLoginFocusNode1.unfocus();
+                          padding: const EdgeInsets.all(8.0),
+                          child: OutlinedButton(
+                              onPressed: () async {
+                                _emailLoginFocusNode.unfocus();
+                                _passwordLoginFocusNode1.unfocus();
 
-                            if (_loginFormKey.currentState!.validate()) {
-                              setState(() {
-                                _isProcessing = true;
-                              });
-                              User? user =
-                                  await FireAuth.signInUsingEmailPassword(
-                                email: _emailLoginTextController.text,
-                                password: _passwordLoginTextController1.text,
-                              ).whenComplete(() => _isProcessing = false);
-                              if (user != null) {
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) => SuccessView()));
-                              }
-                            }
-                          },
-                          child: Text("Login"))
-                      ),
+                                if (_loginFormKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isProcessing = true;
+                                  });
+                                  User? user =
+                                      await FireAuth.signInUsingEmailPassword(
+                                    email: _emailLoginTextController.text,
+                                    password:
+                                        _passwordLoginTextController1.text,
+                                  ).whenComplete(() => _isProcessing = false);
+                                  if (user != null) {
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) => SuccessView(
+                                                currentUser: user)));
+                                  }
+                                }
+                              },
+                              child: Text("Login"))),
                 ],
               ),
             ),

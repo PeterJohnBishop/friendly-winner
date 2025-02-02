@@ -118,7 +118,7 @@ class _SignupViewState extends State<SignupView> {
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            SuccessView()));
+                                            SuccessView(currentUser: user)));
                               }
                             }
                           },
