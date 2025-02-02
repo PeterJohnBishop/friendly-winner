@@ -19,7 +19,7 @@ class _EntryViewState extends State<EntryView> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                        ElevatedButton(
+                        OutlinedButton(
                             onPressed: () {
                                 Navigator.push(
     context,
@@ -29,7 +29,7 @@ class _EntryViewState extends State<EntryView> {
                             child: Text('Sign Up'),
                         ),
                         SizedBox(height: 20),
-                        ElevatedButton(
+                        OutlinedButton(
                             onPressed: () {
                                 Navigator.push(
     context,

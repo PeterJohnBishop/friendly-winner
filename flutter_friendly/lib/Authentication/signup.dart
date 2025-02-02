@@ -43,6 +43,19 @@ class _SignupViewState extends State<SignupView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                    Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Already have an account?"),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => LoginView()),
+                        );
+                      },
+                      child: Text("Login"),
+                    ),
+                  ]),
                   TextFormField(
                     autocorrect: false,
                     controller: _nameRegisterTextController,
@@ -81,15 +94,11 @@ class _SignupViewState extends State<SignupView> {
                     ),
                     decoration: InputDecoration(labelText: "Confirm Password"),
                   ),
-                  OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => LoginView()));
-                      },
-                      child: Text("Back")),
                   _isProcessing
                       ? CircularProgressIndicator()
-                      : OutlinedButton(
+                      : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: OutlinedButton(
                           onPressed: () async {
                             _nameRegisterFocusNode.unfocus();
                             _emailRegisterFocusNode.unfocus();
@@ -114,6 +123,7 @@ class _SignupViewState extends State<SignupView> {
                             }
                           },
                           child: Text("Register"))
+                      ),
                 ],
               ),
             ),
