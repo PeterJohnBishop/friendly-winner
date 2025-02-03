@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_friendly/Authentication/signup.dart';
 import 'package:flutter_friendly/Authentication/FireAuth.dart';
 import 'package:flutter_friendly/Authentication/success.dart';
-import 'validate.dart';
+import 'Validator.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -84,17 +84,38 @@ class _LoginViewState extends State<LoginView> {
                                   setState(() {
                                     _isProcessing = true;
                                   });
-                                  User? user =
-                                      await FireAuth.signInUsingEmailPassword(
-                                    email: _emailLoginTextController.text,
-                                    password:
-                                        _passwordLoginTextController1.text,
-                                  ).whenComplete(() => _isProcessing = false);
-                                  if (user != null) {
-                                    Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (context) => SuccessView(
-                                                currentUser: user)));
+                                  try {
+                                    User? user =
+                                        await FireAuth.signInUsingEmailPassword(
+                                      email: _emailLoginTextController.text,
+                                      password:
+                                          _passwordLoginTextController1.text,
+                                    ).whenComplete(() => _isProcessing = false);
+                                    if (user != null) {
+                                      Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (context) => SuccessView(
+                                                  currentUser: user)));
+                                    }
+                                  } catch (error) {
+                                    setState(() {
+                                      _isProcessing = false;
+                                    });
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Login Failed'),
+                                        content: Text(error
+                                            .toString()), // Display error message
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
                                   }
                                 }
                               },

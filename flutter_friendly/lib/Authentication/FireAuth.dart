@@ -2,9 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FireAuth {
-  // For registering a new user
   static Future<User?> registerUsingEmailPassword({
-    // required String image,
     required String name,
     required String email,
     required String password,
@@ -20,12 +18,11 @@ class FireAuth {
 
       user = userCredential.user;
       await user!.updateDisplayName(name);
-      //   await user!.updatePhotoURL(image);
       await user!.reload();
       user = auth.currentUser;
     } on FirebaseAuthException catch (e) {
-      print(e.message);
-      return null;
+      // Throw the error for handling on the frontend
+      return Future.error(e.message ?? 'Unknown error occurred');
     }
 
     return user;
@@ -46,8 +43,7 @@ class FireAuth {
       );
       user = userCredential.user;
     } on FirebaseAuthException catch (e) {
-      print(e.message);
-      return null;
+      return Future.error(e.message ?? 'Unknown error occurred');
     }
 
     return user;
@@ -89,13 +85,7 @@ class FireAuth {
       await user.updatePassword(password);
       await user.updateDisplayName(name);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
-    } catch (e) {
-      print(e);
+      return Future.error(e.message ?? 'Unknown error occurred');
     }
   }
 
@@ -105,8 +95,8 @@ class FireAuth {
 
     try {
       await auth.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      print(e);
+    } on FirebaseAuthException catch (e) {
+      return Future.error(e.message ?? 'Unknown error occurred');
     }
   }
 
@@ -117,8 +107,8 @@ class FireAuth {
 
     try {
       await user!.delete();
-    } catch (e) {
-      print(e);
+    } on FirebaseAuthException catch (e) {
+      return Future.error(e.message ?? 'Unknown error occurred');
     }
   }
 }

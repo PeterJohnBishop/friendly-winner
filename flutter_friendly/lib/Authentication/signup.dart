@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_friendly/Authentication/login.dart';
 import 'package:flutter_friendly/Authentication/FireAuth.dart';
 import 'package:flutter_friendly/Authentication/success.dart';
-import 'validate.dart';
+import 'Validator.dart';
 
 class SignupView extends StatefulWidget {
   const SignupView({super.key});
@@ -43,9 +43,7 @@ class _SignupViewState extends State<SignupView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                    Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text("Already have an account?"),
                     TextButton(
                       onPressed: () {
@@ -97,33 +95,58 @@ class _SignupViewState extends State<SignupView> {
                   _isProcessing
                       ? CircularProgressIndicator()
                       : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OutlinedButton(
-                          onPressed: () async {
-                            _nameRegisterFocusNode.unfocus();
-                            _emailRegisterFocusNode.unfocus();
-                            _passwordRegisterFocusNode1.unfocus();
-                            _passwordRegisterFocusNode2.unfocus();
-                            if (_registerFormKey.currentState!.validate()) {
-                              setState(() {
-                                _isProcessing = true;
-                              });
-                              User? user =
-                                  await FireAuth.registerUsingEmailPassword(
-                                name: _nameRegisterTextController.text,
-                                email: _emailRegisterTextController.text,
-                                password: _passwordRegisterTextController2.text,
-                              ).whenComplete(() => _isProcessing = false);
-                              if (user != null) {
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            SuccessView(currentUser: user)));
-                              }
-                            }
-                          },
-                          child: Text("Register"))
-                      ),
+                          padding: const EdgeInsets.all(8.0),
+                          child: OutlinedButton(
+                              onPressed: () async {
+                                _nameRegisterFocusNode.unfocus();
+                                _emailRegisterFocusNode.unfocus();
+                                _passwordRegisterFocusNode1.unfocus();
+                                _passwordRegisterFocusNode2.unfocus();
+                                if (_registerFormKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isProcessing = true;
+                                  });
+                                  try {
+                                    User? user = await FireAuth
+                                        .registerUsingEmailPassword(
+                                      name: _nameRegisterTextController.text,
+                                      email: _emailRegisterTextController.text,
+                                      password:
+                                          _passwordRegisterTextController2.text,
+                                    );
+
+                                    // Handle user after successful registration
+                                    if (user != null) {
+                                      // Proceed with the user registration success flow
+                                      _isProcessing = false;
+                                      Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (context) => SuccessView(
+                                                  currentUser: user)));
+                                    }
+                                  } catch (error) {
+                                    setState(() {
+                                      _isProcessing = false;
+                                    });
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Registration Failed'),
+                                        content: Text(error
+                                            .toString()), // Display error message
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              child: Text("Register"))),
                 ],
               ),
             ),
