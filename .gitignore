@@ -128,3 +128,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+go_winner/firebase/friendly-winner-firebase-adminsdk-fbsvc-4c5d6990e6.json
