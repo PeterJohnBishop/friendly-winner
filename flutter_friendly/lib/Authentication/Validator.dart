@@ -37,6 +37,7 @@ class Validator {
     } else if (password.length < 6) {
       return 'Enter a password with length at least 6';
     }
+    return null;
   }
 
   static String? validateZip({required String? zip}) {

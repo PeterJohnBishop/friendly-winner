@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_friendly/Authentication/signup.dart';
-import 'package:flutter_friendly/Authentication/FireAuth.dart';
+import 'package:flutter_friendly/Authentication/fire_auth.dart';
 import 'package:flutter_friendly/Authentication/success.dart';
-import 'Validator.dart';
+import 'validator.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

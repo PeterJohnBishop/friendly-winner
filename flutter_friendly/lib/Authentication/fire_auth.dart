@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class FireAuth {
   static Future<User?> registerUsingEmailPassword({
@@ -18,7 +17,7 @@ class FireAuth {
 
       user = userCredential.user;
       await user!.updateDisplayName(name);
-      await user!.reload();
+      await user.reload();
       user = auth.currentUser;
     } on FirebaseAuthException catch (e) {
       // Throw the error for handling on the frontend

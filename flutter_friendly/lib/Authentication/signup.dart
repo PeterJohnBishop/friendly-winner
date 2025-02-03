@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_friendly/Authentication/login.dart';
-import 'package:flutter_friendly/Authentication/FireAuth.dart';
+import 'package:flutter_friendly/Authentication/fire_auth.dart';
 import 'package:flutter_friendly/Authentication/success.dart';
-import 'Validator.dart';
+import 'validator.dart';
 
 class SignupView extends StatefulWidget {
   const SignupView({super.key});
@@ -119,30 +119,39 @@ class _SignupViewState extends State<SignupView> {
                                     if (user != null) {
                                       // Proceed with the user registration success flow
                                       _isProcessing = false;
-                                      Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(
-                                              builder: (context) => SuccessView(
-                                                  currentUser: user)));
+                                      if (mounted) {
+                                        if (context.mounted) {
+                                          Navigator.of(context).pushReplacement(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SuccessView(
+                                                          currentUser: user)));
+                                        }
+                                      }
                                     }
                                   } catch (error) {
                                     setState(() {
                                       _isProcessing = false;
                                     });
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Text('Registration Failed'),
-                                        content: Text(error
-                                            .toString()), // Display error message
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                            child: Text('OK'),
+                                    if (mounted) {
+                                      if (context.mounted) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text('Registration Failed'),
+                                            content: Text(error
+                                                .toString()), // Display error message
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: Text('OK'),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                    );
+                                        );
+                                      }
+                                    }
                                   }
                                 }
                               },
