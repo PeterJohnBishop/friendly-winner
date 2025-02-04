@@ -18,7 +18,7 @@ var (
 )
 
 // InitFirebase initializes Firebase and Firestore
-func InitFirebase() {
+func InitFirestore() {
 	initOnce.Do(func() { // Ensures this runs only once
 		fmt.Println("Initializing Firebase...")
 		opt := option.WithCredentialsFile("firebase/friendly-winner-firebase-adminsdk-fbsvc-4c5d6990e6.json")
@@ -38,13 +38,15 @@ func InitFirebase() {
 	})
 }
 
-func AddUser(ctx context.Context, userID string, userData map[string]interface{}) error {
+func AddUser(ctx context.Context, uid string, userData map[string]interface{}) error {
+
+	// Since interface{} is the empty interface, it can store values of any type (strings, integers, booleans, structs, etc.).
 
 	// Create a new context with a 60-second timeout
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel() // Ensure the context is canceled when the function exits
 
-	_, err := firestoreClient.Collection("users").Doc(userID).Set(ctx, userData)
+	_, err := firestoreClient.Collection("users").Doc(uid).Set(ctx, userData)
 	if err != nil {
 		return fmt.Errorf("failed to add user: %v", err)
 	}
@@ -55,38 +57,35 @@ func AddUser(ctx context.Context, userID string, userData map[string]interface{}
 func GetAllUsers(ctx context.Context) ([]map[string]interface{}, error) {
 	var users []map[string]interface{}
 
-	// Create a new context with a 60-second timeout
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
-	defer cancel() // Ensure the context is canceled when the function exits
+	defer cancel()
 
-	// Query all documents in the "users" collection
 	iter := firestoreClient.Collection("users").Documents(ctx)
-	defer iter.Stop() // Close iterator when function exits
+	defer iter.Stop()
 
 	for {
 		doc, err := iter.Next()
 		if err != nil {
 			if err.Error() == "iterator done" {
-				break // End of documents
+				break
 			}
 			return nil, fmt.Errorf("failed to retrieve users: %v", err)
 		}
 
 		userData := doc.Data()
-		userData["id"] = doc.Ref.ID // Include document ID in response
+		userData["uid"] = doc.Ref.ID // Include document ID in response
 		users = append(users, userData)
 	}
 
 	return users, nil
 }
 
-func GetUserById(ctx context.Context, userID string) (map[string]interface{}, error) {
+func GetUserById(ctx context.Context, uid string) (map[string]interface{}, error) {
 
-	// Create a new context with a 60-second timeout
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
-	defer cancel() // Ensure the context is canceled when the function exits
+	defer cancel()
 
-	doc, err := firestoreClient.Collection("users").Doc(userID).Get(ctx)
+	doc, err := firestoreClient.Collection("users").Doc(uid).Get(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user: %v", err)
 	}
@@ -96,13 +95,12 @@ func GetUserById(ctx context.Context, userID string) (map[string]interface{}, er
 	return data, nil
 }
 
-func UpdateUser(ctx context.Context, userID string, updates map[string]interface{}) error {
+func UpdateUser(ctx context.Context, uid string, updates map[string]interface{}) error {
 
-	// Create a new context with a 60-second timeout
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
-	defer cancel() // Ensure the context is canceled when the function exits
+	defer cancel()
 
-	_, err := firestoreClient.Collection("users").Doc(userID).Set(ctx, updates, firestore.MergeAll)
+	_, err := firestoreClient.Collection("users").Doc(uid).Set(ctx, updates, firestore.MergeAll)
 	if err != nil {
 		return fmt.Errorf("failed to update user: %v", err)
 	}
@@ -110,13 +108,12 @@ func UpdateUser(ctx context.Context, userID string, updates map[string]interface
 	return nil
 }
 
-func DeleteUser(ctx context.Context, userID string) error {
+func DeleteUser(ctx context.Context, uid string) error {
 
-	// Create a new context with a 60-second timeout
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
-	defer cancel() // Ensure the context is canceled when the function exits
+	defer cancel()
 
-	_, err := firestoreClient.Collection("users").Doc(userID).Delete(ctx)
+	_, err := firestoreClient.Collection("users").Doc(uid).Delete(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to delete user: %v", err)
 	}

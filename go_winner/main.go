@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	firebase.InitFirebase()   // Initialize Firebase
+	firebase.InitFirestore()  // Initialize Firebase
 	r := server.SetupServer() // Setup the server
 	r.Run(":8080")            // Run the server on http://localhost:8080 by default
 }

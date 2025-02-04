@@ -10,15 +10,21 @@ import (
 )
 
 type User struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	Address1 string `json:"address1"`
+	Address2 string `json:"address2"`
+	City     string `json:"city"`
+	State    string `json:"state"`
+	Zip      string `json:"zip"`
 }
 
 func RegisterUserRoutes(router *gin.RouterGroup) {
 
-	router.POST("/", func(c *gin.Context) {
+	router.POST("/user/new/:uid", func(c *gin.Context) {
 		var newUser User
+		uid := c.Param("uid")
 
 		// Bind JSON to struct
 		if err := c.ShouldBindJSON(&newUser); err != nil {
@@ -26,7 +32,7 @@ func RegisterUserRoutes(router *gin.RouterGroup) {
 			return
 		}
 
-		if newUser.ID == "" {
+		if uid == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "User ID is required"})
 			return
 		}
@@ -35,12 +41,18 @@ func RegisterUserRoutes(router *gin.RouterGroup) {
 
 		// Convert User struct to Firestore-compatible map
 		userData := map[string]interface{}{
-			"name":  newUser.Name,
-			"email": newUser.Email,
+			"name":     newUser.Name,
+			"email":    newUser.Email,
+			"phone":    newUser.Phone,
+			"address1": newUser.Address1,
+			"address2": newUser.Address2,
+			"city":     newUser.City,
+			"state":    newUser.State,
+			"zip":      newUser.Zip,
 		}
 
 		// Save to Firestore
-		if err := firebase.AddUser(ctx, newUser.ID, userData); err != nil {
+		if err := firebase.AddUser(ctx, uid, userData); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to create user", "error": err.Error()})
 			return
 		}
@@ -48,11 +60,11 @@ func RegisterUserRoutes(router *gin.RouterGroup) {
 		c.JSON(http.StatusCreated, gin.H{"message": "User created successfully", "user": newUser})
 	})
 
-	router.GET("/users/:id", func(c *gin.Context) {
+	router.GET("/user/:uid", func(c *gin.Context) {
 		ctx := c.Request.Context()
-		userID := c.Param("id")
+		uid := c.Param("uid")
 
-		user, err := firebase.GetUserById(ctx, userID)
+		user, err := firebase.GetUserById(ctx, uid)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"message": "User not found", "error": err.Error()})
 			return
@@ -61,7 +73,7 @@ func RegisterUserRoutes(router *gin.RouterGroup) {
 		c.JSON(http.StatusOK, user)
 	})
 
-	router.GET("/users", func(c *gin.Context) {
+	router.GET("/", func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		users, err := firebase.GetAllUsers(ctx)
@@ -73,9 +85,9 @@ func RegisterUserRoutes(router *gin.RouterGroup) {
 		c.JSON(http.StatusOK, users)
 	})
 
-	router.PUT("/users/:id", func(c *gin.Context) {
+	router.PUT("/user/:uid", func(c *gin.Context) {
 		ctx := c.Request.Context()
-		userID := c.Param("id")
+		uid := c.Param("uid")
 
 		var updateData map[string]interface{}
 		if err := c.ShouldBindJSON(&updateData); err != nil {
@@ -83,7 +95,7 @@ func RegisterUserRoutes(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := firebase.UpdateUser(ctx, userID, updateData); err != nil {
+		if err := firebase.UpdateUser(ctx, uid, updateData); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update user", "error": err.Error()})
 			return
 		}
@@ -91,11 +103,11 @@ func RegisterUserRoutes(router *gin.RouterGroup) {
 		c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
 	})
 
-	router.DELETE("/users/:id", func(c *gin.Context) {
+	router.DELETE("/user/:uid", func(c *gin.Context) {
 		ctx := c.Request.Context()
-		userID := c.Param("id")
+		uid := c.Param("id")
 
-		if err := firebase.DeleteUser(ctx, userID); err != nil {
+		if err := firebase.DeleteUser(ctx, uid); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to delete user", "error": err.Error()})
 			return
 		}
