@@ -70,7 +70,7 @@ func RegisterOrderRoutes(router *gin.RouterGroup) {
 		ctx := context.Background()
 		id := c.Param("documentId")
 
-		order, err := firebase.GetOrderById(ctx, id)
+		order, err := firebase.GetOrderByDocumentId(ctx, id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to retrieve order", "error": err.Error()})
 			return

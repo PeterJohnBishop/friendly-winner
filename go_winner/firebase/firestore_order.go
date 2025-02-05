@@ -47,7 +47,7 @@ func GetAllOrders(ctx context.Context) ([]map[string]interface{}, error) {
 	return orders, nil
 }
 
-func GetOrderById(ctx context.Context, documentID string) (map[string]interface{}, error) {
+func GetOrderByDocumentId(ctx context.Context, documentID string) (map[string]interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
@@ -61,13 +61,38 @@ func GetOrderById(ctx context.Context, documentID string) (map[string]interface{
 	return data, nil
 }
 
-func GetOrdersByUserId(ctx context.Context, userID string) ([]map[string]interface{}, error) {
+func GetOrdersByUserId(ctx context.Context, uid string) ([]map[string]interface{}, error) {
 	var orders []map[string]interface{}
 
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
-	iter := FirestoreClient.Collection("orders").Where("user_id", "==", userID).Documents(ctx)
+	iter := FirestoreClient.Collection("orders").Where("user_id", "==", uid).Documents(ctx)
+	defer iter.Stop()
+
+	for {
+		doc, err := iter.Next()
+		if err != nil {
+			if err.Error() == "iterator done" {
+				break
+			}
+			return nil, fmt.Errorf("failed to retrieve orders: %v", err)
+		}
+
+		orderData := doc.Data()
+		orders = append(orders, orderData)
+	}
+
+	return orders, nil
+}
+
+func GetOrdersByOrderId(ctx context.Context, orderID string) ([]map[string]interface{}, error) {
+	var orders []map[string]interface{}
+
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
+	defer cancel()
+
+	iter := FirestoreClient.Collection("orders").Where("order_id", "==", orderID).Documents(ctx)
 	defer iter.Stop()
 
 	for {

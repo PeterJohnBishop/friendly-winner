@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ItemDocument {
+  final String itemId;
   final List<String> images;
   final String name;
   final String description;
@@ -15,6 +16,7 @@ class ItemDocument {
   static final String _baseUrl = 'http://localhost:8080/items';
 
   ItemDocument({
+    required this.itemId,
     required this.images,
     required this.name,
     required this.description,
@@ -28,6 +30,7 @@ class ItemDocument {
 
   factory ItemDocument.fromJson(Map<String, dynamic> json) {
     return ItemDocument(
+      itemId: json['item_id'],
       images: json['images'],
       name: json['name'],
       description: json['description'],
@@ -47,6 +50,7 @@ class ItemDocument {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
+        'item_id': item.itemId,
         'images': item.images,
         'name': item.name,
         'description': item.description,
@@ -61,9 +65,14 @@ class ItemDocument {
 
     if (response.statusCode == 201) {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
-      return ItemDocument.fromJson(responseData);
+
+      if (responseData.containsKey("item")) {
+        return ItemDocument.fromJson(responseData["item"]);
+      } else {
+        throw Exception("User data missing in API response");
+      }
     } else {
-      throw Exception('Failed to create item');
+      throw Exception("Error creating User Document");
     }
   }
 
@@ -89,13 +98,15 @@ class ItemDocument {
     }
   }
 
-  static Future<ItemDocument> updateItem(String documentId, ItemDocument item) async {
+  static Future<ItemDocument> updateItem(
+      String documentId, ItemDocument item) async {
     final response = await http.put(
       Uri.parse('$_baseUrl/item/$documentId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
+        'item_id': item.itemId,
         'images': item.images,
         'name': item.name,
         'description': item.description,

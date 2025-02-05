@@ -47,12 +47,30 @@ func GetAllItems(ctx context.Context) ([]map[string]interface{}, error) {
 	return items, nil
 }
 
-func GetItemById(ctx context.Context, documentID string) (map[string]interface{}, error) {
+func GetItemByDocumentId(ctx context.Context, documentID string) (map[string]interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	doc, err := FirestoreClient.Collection("items").Doc(documentID).Get(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get item: %v", err)
+	}
+
+	data := doc.Data()
+	fmt.Println("Item retrieved:", data)
+	return data, nil
+}
+
+func GetItemByItemId(ctx context.Context, itemID string) (map[string]interface{}, error) {
+
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
+	defer cancel()
+
+	iter := FirestoreClient.Collection("items").Where("item_id", "==", itemID).Documents(ctx)
+	defer iter.Stop()
+
+	doc, err := iter.Next()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get item: %v", err)
 	}

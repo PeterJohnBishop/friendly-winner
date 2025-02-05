@@ -10,6 +10,7 @@ import (
 )
 
 type Item struct {
+	ItemID      string                 `json:"item_id"`
 	Images      []string               `json:"images"` // Array of image URLs
 	Name        string                 `json:"name"`
 	Description string                 `json:"description"`
@@ -36,6 +37,7 @@ func RegisterItemRoutes(router *gin.RouterGroup) {
 
 		// Convert Item struct to Firestore-compatible map
 		itemData := map[string]interface{}{
+			"item_id":     newItem.ItemID,
 			"images":      newItem.Images,
 			"name":        newItem.Name,
 			"description": newItem.Description,
@@ -72,7 +74,20 @@ func RegisterItemRoutes(router *gin.RouterGroup) {
 		ctx := context.Background()
 		id := c.Param("documentId")
 
-		item, err := firebase.GetItemById(ctx, id)
+		item, err := firebase.GetItemByDocumentId(ctx, id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to retrieve item", "error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"item": item})
+	})
+
+	router.GET("/item/item/:itemId", func(c *gin.Context) {
+		ctx := context.Background()
+		id := c.Param("itemId")
+
+		item, err := firebase.GetItemByItemId(ctx, id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to retrieve item", "error": err.Error()})
 			return
