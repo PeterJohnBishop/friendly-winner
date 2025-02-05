@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_friendly/Authentication/login.dart';
-import 'package:flutter_friendly/Authentication/fire_auth.dart';
-import 'package:flutter_friendly/Authentication/success.dart';
+import 'package:flutter_friendly/authentication/login.dart';
+import 'package:flutter_friendly/authentication/fire_auth.dart';
+import 'package:flutter_friendly/authentication/success.dart';
+import 'package:flutter_friendly/firestore/user_document.dart';
 import 'validator.dart';
 
 class SignupView extends StatefulWidget {
@@ -115,18 +116,38 @@ class _SignupViewState extends State<SignupView> {
                                           _passwordRegisterTextController2.text,
                                     );
 
-                                    // Handle user after successful registration
                                     if (user != null) {
-                                      // Proceed with the user registration success flow
-                                      _isProcessing = false;
-                                      if (mounted) {
-                                        if (context.mounted) {
-                                          Navigator.of(context).pushReplacement(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SuccessView(
-                                                          currentUser: user)));
+                                      UserDocument newUser = UserDocument(
+                                        name: _nameRegisterTextController.text,
+                                        email:
+                                            _emailRegisterTextController.text,
+                                        phone: '',
+                                        address1: '',
+                                        address2: '',
+                                        city: '',
+                                        state: '',
+                                        zip: '',
+                                      );
+
+                                      UserDocument userDoc =
+                                          await UserDocument.createUser(
+                                              user.uid, newUser);
+
+                                      if (userDoc.email == user.email) {
+                                        _isProcessing = false;
+                                        if (mounted) {
+                                          if (context.mounted) {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SuccessView(
+                                                                currentUser:
+                                                                    user)));
+                                          }
                                         }
+                                      } else {
+                                        print("User document was not created.");
                                       }
                                     }
                                   } catch (error) {
@@ -138,7 +159,8 @@ class _SignupViewState extends State<SignupView> {
                                         showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                            title: Text('Registration Failed'),
+                                            title: Text(
+                                                'Registration Failed (error caught)'),
                                             content: Text(error
                                                 .toString()), // Display error message
                                             actions: [

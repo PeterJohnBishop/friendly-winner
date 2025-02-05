@@ -1,7 +1,7 @@
 package main
 
 import (
-	"friendly-winner/go_winner/main.go/firebase"
+	firebase "friendly-winner/go_winner/main.go/firebase"
 	"friendly-winner/go_winner/main.go/server"
 )
 

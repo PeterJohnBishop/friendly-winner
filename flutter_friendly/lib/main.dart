@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_friendly/Authentication/login.dart';
+import 'package:flutter_friendly/authentication/login.dart';
 import 'firebase_options.dart';
 
 void main() async {

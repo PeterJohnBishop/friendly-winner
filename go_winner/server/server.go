@@ -29,6 +29,10 @@ func SetupServer() *gin.Engine {
 	// Register routes
 	userRoutes := r.Group("/users")
 	routes.RegisterUserRoutes(userRoutes)
+	itemRoutes := r.Group("/items")
+	routes.RegisterItemRoutes(itemRoutes)
+	orderRoutes := r.Group("/orders")
+	routes.RegisterOrderRoutes(orderRoutes)
 
 	return r
 }

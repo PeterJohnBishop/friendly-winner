@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"friendly-winner/go_winner/main.go/firebase"
+	firebase "friendly-winner/go_winner/main.go/firebase"
 
 	"github.com/gin-gonic/gin"
 )
