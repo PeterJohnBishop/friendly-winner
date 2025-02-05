@@ -3,6 +3,8 @@ import 'signup.dart';
 import 'login.dart';
 
 class EntryView extends StatefulWidget {
+  const EntryView({super.key});
+
     @override
     _EntryViewState createState() => _EntryViewState();
 }

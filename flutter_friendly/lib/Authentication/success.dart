@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class SuccessView extends StatefulWidget {
     final User currentUser;
 
-    SuccessView({required this.currentUser});
+    const SuccessView({super.key, required this.currentUser});
 
     @override
     _SuccessViewState createState() => _SuccessViewState();
