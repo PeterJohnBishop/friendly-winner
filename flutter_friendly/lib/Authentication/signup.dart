@@ -177,7 +177,7 @@ class _SignupViewState extends State<SignupView> {
                                   }
                                 }
                               },
-                              child: Text("Register"))),
+                              child: Text("Sign Up"))),
                 ],
               ),
             ),
