@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:async';
 
 class ImagePickerWidget extends StatefulWidget {
+  const ImagePickerWidget({super.key});
+
   @override
   _ImagePickerWidgetState createState() => _ImagePickerWidgetState();
 }
