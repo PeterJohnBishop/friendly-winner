@@ -15,7 +15,7 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
 
   // Function to pick multiple images
   Future<void> _pickImages() async {
-    final List<XFile>? pickedFiles = await _picker.pickMultiImage();
+    final List<XFile> pickedFiles = await _picker.pickMultiImage();
     if (pickedFiles != null) {
       setState(() {
         _images.addAll(pickedFiles.map((file) => File(file.path)));
