@@ -3,7 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class MultiImagePickerWidget extends StatefulWidget {
-  const MultiImagePickerWidget({super.key});
+  final ValueChanged<List<File>?> onImageSelected;
+  const MultiImagePickerWidget({Key? key, required this.onImageSelected})
+      : super(key: key);
 
   @override
   _MultiImagePickerWidgetState createState() => _MultiImagePickerWidgetState();
@@ -16,10 +18,11 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
   // Function to pick multiple images
   Future<void> _pickImages() async {
     final List<XFile> pickedFiles = await _picker.pickMultiImage();
-    if (pickedFiles != null) {
+    if (pickedFiles.isNotEmpty) {
       setState(() {
         _images.addAll(pickedFiles.map((file) => File(file.path)));
       });
+      widget.onImageSelected(_images);
     }
   }
 
@@ -49,7 +52,8 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
                           padding: const EdgeInsets.all(8.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: Image.file(_images[index], height: 100, width: 100, fit: BoxFit.cover),
+                            child: Image.file(_images[index],
+                                height: 100, width: 100, fit: BoxFit.cover),
                           ),
                         ),
                         Positioned(
@@ -59,10 +63,11 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
                             onTap: () => _removeImage(index),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.red,
+                                color: Colors.black,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.close, color: Colors.white, size: 18),
+                              child: const Icon(Icons.close,
+                                  color: Colors.white, size: 18),
                             ),
                           ),
                         ),
@@ -77,7 +82,10 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
 
         // Button to Pick Multiple Images
         ElevatedButton.icon(
-          onPressed: _pickImages,
+          onPressed: () {
+            _images.clear();
+            _pickImages();
+          },
           icon: const Icon(Icons.photo_library),
           label: const Text("Select Images"),
         ),

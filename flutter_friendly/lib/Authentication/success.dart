@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_friendly/images/multi_image_upload.dart';
+import 'package:flutter_friendly/Items/create_item.dart';
 
 class SuccessView extends StatefulWidget {
   final User currentUser;
@@ -21,7 +23,13 @@ class _SuccessViewState extends State<SuccessView> {
           children: [
             Text('Username: ${widget.currentUser.displayName}'),
             Text('Email: ${widget.currentUser.email}'),
-            MultiImagePickerWidget()
+            OutlinedButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => CreateItem()));
+              },
+              child: const Text('Sign Out'),
+            )
           ],
         ),
       ),
